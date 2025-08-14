@@ -86,7 +86,6 @@ class AppSidebar extends HTMLElement {
     // Context Menu
     this.contextMenu = this.shadowRoot.querySelector("#contextMenu");
     // this.renameOption = this.shadowRoot.querySelector(".renameOption");
-    this.deleteOption = this.shadowRoot.querySelector(".deleteOption");
     this.contextTarget = null;
 
     // this.renameOption.addEventListener("click", async () => {
@@ -102,16 +101,6 @@ class AppSidebar extends HTMLElement {
     //     this.contextMenu.style.display = "none";
     //   }
     // });
-
-    this.deleteOption.addEventListener("click", async () => {
-      if (this.contextTarget) {
-        const playlistId = this.contextTarget.dataset.playlistId;
-        this.contextTarget.remove();
-        // TODO: Gọi API xóa playlist
-        this.contextTarget = null;
-        this.contextMenu.style.display = "none";
-      }
-    });
 
     // Khi click ở ngoài context menu thì menu đó đóng đi
     document.addEventListener("click", (e) => {
