@@ -463,3 +463,140 @@ function renderTracks(tracks) {
 
   trackList.innerHTML = html;
 }
+
+// Profile Logic
+
+async function updateCurrentUser(path, profile) {
+  const res = await httpRequest.put(path, profile);
+  return res;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const modalProfile = document.getElementById("modalProfile");
+  const profileName = document.getElementById("profile-name");
+  const closeBtn = modalProfile.querySelector(".close-btn");
+  const nameInput = document.getElementById("profileNameInput");
+  const saveBtn = modalProfile.querySelector(".save-btn");
+  const avatarInput = document.getElementById("avatarInput");
+  const profileAvatar = document.getElementById("profileAvatar");
+  const avatarPreview = document.getElementById("avatarPreview");
+  const userAvatarURL = document.getElementById("user-avatar-img");
+
+  async function uploadImageToCloudinary(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "demo_unsigned");
+
+    const cloudName = "dqi86z9gb";
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await res.json();
+    return data.secure_url; // URL ảnh Cloudinary
+  }
+
+  // Khi reload `F5` vẫn hiển thị thông tin tên của người dùng
+  const user = getItemStorage("user");
+  console.log(user);
+  if (user) {
+    profileName.textContent = user?.display_name;
+    avatarPreview.src = user?.avatar_url;
+    profileAvatar.src = user?.avatar_url;
+    userAvatarURL.src = user?.avatar_url;
+  } else {
+    window.location.href = "index.html";
+  }
+
+  function openModal() {
+    profileName.addEventListener("click", function () {
+      modalProfile.style.display = "block";
+    });
+
+    const currentUser = getItemStorage("user");
+
+    if (currentUser && currentUser.display_name)
+      nameInput.value = currentUser.display_name;
+    else {
+      nameInput.value = "";
+    }
+  }
+
+  function hideModalProfile() {
+    modalProfile.style.display = "none";
+  }
+
+  function closeModal() {
+    closeBtn.addEventListener("click", hideModalProfile);
+    window.addEventListener("click", function (e) {
+      if (e.target === modalProfile) {
+        hideModalProfile();
+      }
+    });
+  }
+
+  // Xem ảnh trước khi chọn
+  avatarInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      avatarPreview.src = imageUrl;
+    }
+  });
+
+  saveBtn.addEventListener("click", async function () {
+    const file = avatarInput.files[0];
+    let uploadedImageUrl = null;
+
+    if (file) {
+      try {
+        uploadedImageUrl = await uploadImageToCloudinary(file);
+      } catch (err) {
+        toast({ text: "Upload image profile fail", type: "error" });
+        return;
+      }
+    }
+
+    const nameInputValue = nameInput.value.trim();
+    const { email, username, display_name } = getItemStorage("user");
+    console.log(email, username, display_name);
+    const profile = {
+      email,
+      username,
+      display_name,
+      display_name: nameInputValue,
+      avatar_url: file ? uploadedImageUrl : "",
+    };
+
+    try {
+      const { message, user } = await updateCurrentUser(
+        endpoints.usersMe,
+        profile
+      );
+
+      toast({
+        text: message,
+        type: "success",
+      });
+
+      hideModalProfile();
+      profileName.textContent = user?.display_name;
+      profileAvatar.src = user?.avatar_url;
+      userAvatarURL.src = user?.avatar_url;
+      setItemStorage("user", user);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  openModal();
+  closeModal();
+});
