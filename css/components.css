@@ -277,6 +277,7 @@
   font-size: 14px;
   font-weight: 600;
   transition: all var(--transition-fast);
+  min-width: 80px;
 }
 
 .nav-tab:hover {
@@ -284,7 +285,7 @@
 }
 
 .nav-tab.active {
-  background-color: var(--bg-tertiary);
+  background-color: #565656;
   color: var(--text-primary);
 }
 

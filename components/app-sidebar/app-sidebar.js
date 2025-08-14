@@ -26,7 +26,8 @@ class AppSidebar extends HTMLElement {
 
     this.shadowRoot.innerHTML = createShadowTempalate(cssTexts, htmlText);
 
-    this.start();
+    // this.start();
+    this._renderPlaylist();
 
     // Xử lý khi nhấn vào nút create thì hiển thị modal tạo create lên
     const createBtn = this.shadowRoot.querySelector("#create-btn");
@@ -65,7 +66,7 @@ class AppSidebar extends HTMLElement {
       };
 
       try {
-        const { message, playlist } = await httpRequest.post(
+        const { message } = await httpRequest.post(
           endpoints.playlists,
           playlistItem
         );
@@ -88,20 +89,6 @@ class AppSidebar extends HTMLElement {
     // this.renameOption = this.shadowRoot.querySelector(".renameOption");
     this.contextTarget = null;
 
-    // this.renameOption.addEventListener("click", async () => {
-    //   if (this.contextTarget) {
-    //     const titleEl = this.contextTarget.querySelector(".item-title");
-    //     const currentName = titleEl.textContent;
-    //     const newName = prompt("Enter new playlist name", currentName);
-    //     if (newName && newName.trim()) {
-    //       titleEl.textContent = newName.trim();
-    //       // TODO: Gọi API rename playlist
-    //     }
-    //     this.contextTarget = null;
-    //     this.contextMenu.style.display = "none";
-    //   }
-    // });
-
     // Khi click ở ngoài context menu thì menu đó đóng đi
     document.addEventListener("click", (e) => {
       const path = e.composedPath();
@@ -116,11 +103,36 @@ class AppSidebar extends HTMLElement {
         this.contextMenu.style.display = "none";
       }
     });
+
+    // Khi click vào từng tab playlist, artists thì sẽ chuyển tab
+    const navTabs = this.shadowRoot.querySelectorAll(".nav-tab");
+    navTabs.forEach(navTab => {
+
+      navTab.addEventListener("click", () => {
+        navTabs.forEach(item => item.classList.remove("active"));
+        navTab.classList.add("active");
+
+        switch (navTab.dataset.tab) {
+          case "playlist":
+            this._renderPlaylist();
+            break;
+
+          case "artist":
+            this._renderArtists();
+            break;
+
+          default:
+            this._renderPlaylist();
+            break;
+        }
+      });
+    });
   }
 
-  _renderPlaylist(playlists) {
+  async _renderPlaylist() {
     const libraryContent = this.shadowRoot.querySelector(".library-content");
     const urlPlaylist = "https://example.com/playlist-cover.jpg";
+    const playlists = await this._getPlaylists();
 
     const html = playlists
       .map(
@@ -155,12 +167,65 @@ class AppSidebar extends HTMLElement {
     this._addClickListener();
   }
 
+  async _renderArtists() {
+    try {
+
+      const libraryContent = this.shadowRoot.querySelector(".library-content");
+      const urlPlaylist = "https://example.com/playlist-cover.jpg";
+      const { artists } = await httpRequest.get(endpoints.artists);
+
+      const html = artists
+        .map(
+          (playlist, index) =>
+            `<div 
+            class="library-item" 
+            data-playlist-id="${playlist.id}"
+            data-index="${index}"
+          >
+        <img
+          src=${escapeHtml(
+              playlist.image_url && !playlist.image_url.includes(urlPlaylist)
+                ? playlist.image_url
+                : "./../../playlist-default.png"
+            )}
+          alt=${playlist.name}
+          class="item-image"
+        />
+        <div class="item-info">
+          <div class="item-title">${escapeHtml(playlist.name)}</div>
+          <div class="item-subtitle">Playlist • ${escapeHtml(
+              playlist.user_username ? playlist.user_username : "Han"
+            )}</div>
+        </div>
+      </div>`
+        )
+        .join("");
+
+      libraryContent.innerHTML = html;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  renderArtists() {
+
+  }
+
   async start() {
     try {
       const { playlists } = await httpRequest.get(endpoints.playlists);
       if (playlists.length) {
         this._renderPlaylist(playlists);
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async _getPlaylists() {
+    try {
+      const { playlists } = await httpRequest.get(endpoints.playlists);
+      return playlists;
     } catch (error) {
       console.log(error);
     }
