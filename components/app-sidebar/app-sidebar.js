@@ -3,6 +3,7 @@ import endpoints from "../../utils/endpoints.js";
 import httpRequest from "../../utils/httpRequest.js";
 import { escapeHtml } from "../../utils/common.js";
 import { setItemStorage } from "../../utils/storage.js";
+import { toast } from "../../utils/toast.js";
 const { loadMultipleFiles, loadFile } = createFileLoader(import.meta.url);
 
 class AppSidebar extends HTMLElement {
@@ -26,6 +27,61 @@ class AppSidebar extends HTMLElement {
     this.shadowRoot.innerHTML = createShadowTempalate(cssTexts, htmlText);
 
     this.start();
+
+    // Xử lý khi nhấn vào nút create thì hiển thị modal tạo create lên
+    const createBtn = this.shadowRoot.querySelector("#create-btn");
+    const createMenu = this.shadowRoot.querySelector("#create-menu");
+    const createPlaylist = this.shadowRoot.querySelector("#create-playlist");
+
+    createBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      createMenu.classList.toggle("show");
+    });
+
+    // Khi click vào modal lớp phủ bền ngoài thì modal create playlist sẽ bị close đi
+    document.addEventListener("click", (e) => {
+      const path = e.composedPath();
+
+      // Nếu không click vào menu hoặc nút thì đóng nó
+      if (!path.includes(createMenu) && !path.includes(createBtn)) {
+        createMenu.classList.remove("show");
+      }
+    });
+
+    // Khi nhấn `Escape` thì modal create playlist sẽ bị close đi
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Escape") {
+        createMenu.classList.remove("show");
+      }
+    });
+
+    // Khi click vào nút create thì tạo ra playlist mới
+    createPlaylist.addEventListener("click", async () => {
+      const playlistItem = {
+        name: "My Playlist",
+        description: "Playlist is nice",
+        is_public: true,
+        image_url: "",
+      };
+
+      try {
+        const { message, playlist } = await httpRequest.post(
+          endpoints.playlists,
+          playlistItem
+        );
+
+        toast({
+          text: message,
+          type: "success",
+        });
+
+        createMenu.classList.remove("show");
+
+        this.start();
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 
   _renderPlaylist(playlists) {

@@ -8,10 +8,61 @@
   <nav class="sidebar-nav">
     <div class="nav-section">
       <h2 class="section-title">Your Library</h2>
-      <button class="create-btn">
-        <i class="fas fa-plus"></i>
-        Create
-      </button>
+      <div class="create-control">
+        <button class="create-btn" id="create-btn">
+          <i class="fas fa-plus"></i>
+          Create
+        </button>
+
+        <ul class="create-menu" id="create-menu">
+          <li class="create-menu-item" id="create-item-playlist">
+            <div class="create-menu-item-icon">
+              <div class="item-wrap-icon">
+                <i class="fa-solid fa-music"></i>
+              </div>
+            </div>
+            <div class="create-menu-item-info" id="create-playlist">
+              <h3 class="create-menu-item-name">Playlist</h3>
+              <p class="create-menu-item-desc">
+                Create a playlist with songs or episodes
+              </p>
+            </div>
+          </li>
+
+          <div class="border"></div>
+
+          <li class="create-menu-item">
+            <div class="create-menu-item-icon">
+              <div class="item-wrap-icon icon-circle">
+                <div class="circle circle-1">
+                  <i class="fa-solid fa-circle"></i>
+                </div>
+                <div class="circle circle-2">
+                  <i class="fa-solid fa-circle"></i>
+                </div>
+              </div>
+            </div>
+            <div class="create-menu-item-info">
+              <h3 class="create-menu-item-name">Blend</h3>
+              <p class="create-menu-item-desc">
+                Combine your friends' tastes into a playlist
+              </p>
+            </div>
+          </li>
+
+          <li class="create-menu-item">
+            <div class="create-menu-item-icon">
+              <div class="item-wrap-icon">
+                <i class="fa-regular fa-folder"></i>
+              </div>
+            </div>
+            <div class="create-menu-item-info">
+              <h3 class="create-menu-item-name">Folder</h3>
+              <p class="create-menu-item-desc">Organize your playlists</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="nav-tabs">

@@ -154,6 +154,120 @@
   font-size: 16px;
 }
 
+/* Create-menu */
+.create-menu {
+  min-width: 356px;
+  width: 340px;
+  position: absolute;
+  top: 42px !important;
+  left: 0 !important;
+  z-index: var(--z-header);
+  background-color: var(--bg-hover);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  display: none;
+}
+
+.create-menu.show {
+  display: block;
+}
+
+.create-menu .border {
+  height: 0.5px;
+  width: 90%;
+  background-color: var(--bg-hover-active);
+  margin: 0 auto 4px;
+}
+
+.create-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 10px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  margin-bottom: 4px;
+  cursor: default;
+}
+
+.create-menu-item:hover {
+  background-color: #2a2a2a;
+}
+
+.create-menu-item:hover i {
+  color: var(--accent-primary);
+}
+
+.create-menu-item-icon {
+  flex-basis: 20%;
+}
+
+.item-wrap-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #3e3e3e;
+}
+
+.item-wrap-icon i {
+  font-size: 20px;
+}
+
+.create-menu-item-info {
+  flex: 1;
+}
+
+.create-menu-item-name {
+  font-size: 16px;
+}
+
+.create-menu-item-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.create-menu-item .circle-1 i,
+.create-menu-item .circle-2 i {
+  font-size: 16px;
+  transition: all var(--transition-normal);
+}
+
+.item-wrap-icon {
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.create-menu-item:hover .item-wrap-icon.icon-circle {
+  transform: rotate(5deg);
+}
+
+.create-menu-item .circle {
+  position: absolute;
+}
+
+.create-menu-item .circle-1 {
+  left: 43%;
+  color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2.5px);
+}
+
+.create-menu-item:hover .circle-1 i {
+  color: #9bfcbd;
+}
+
+.create-menu-item .circle-2 {
+  right: 43%;
+  color: rgba(255, 255, 255, 0.3);
+  transform: translateY(2.5px);
+}
+
+.create-menu-item:hover .circle-1 i {
+  color: #16d75a;
+}
+
 /* Tabs */
 .nav-tab {
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -442,6 +556,10 @@
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.create-control {
+  position: relative;
 }
 
 .track-list {

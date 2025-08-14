@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function rendenBiggestHits(playlists) {
-  const hitsGrid = document.querySelector("#hits-grid");
+  const hitsGrid = document.querySelector("#hits-grid"); // ???
   const urlPlaylist = "https://example.com/playlist-cover.jpg";
 
   const html = playlists
