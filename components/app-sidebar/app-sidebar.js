@@ -82,6 +82,51 @@ class AppSidebar extends HTMLElement {
         console.log(error);
       }
     });
+
+    // Context Menu
+    this.contextMenu = this.shadowRoot.querySelector("#contextMenu");
+    this.renameOption = this.shadowRoot.querySelector(".renameOption");
+    this.deleteOption = this.shadowRoot.querySelector(".deleteOption");
+    this.contextTarget = null;
+
+    this.renameOption.addEventListener("click", async () => {
+      if (this.contextTarget) {
+        const titleEl = this.contextTarget.querySelector(".item-title");
+        const currentName = titleEl.textContent;
+        const newName = prompt("Enter new playlist name", currentName);
+        if (newName && newName.trim()) {
+          titleEl.textContent = newName.trim();
+          // TODO: Gọi API rename playlist
+        }
+        this.contextTarget = null;
+        this.contextMenu.style.display = "none";
+      }
+    });
+
+    this.deleteOption.addEventListener("click", async () => {
+      if (this.contextTarget) {
+        const playlistId = this.contextTarget.dataset.playlistId;
+        this.contextTarget.remove();
+        // TODO: Gọi API xóa playlist
+        this.contextTarget = null;
+        this.contextMenu.style.display = "none";
+      }
+    });
+
+    // Khi click ở ngoài context menu thì menu đó đóng đi
+    document.addEventListener("click", (e) => {
+      const path = e.composedPath();
+
+      // Đóng create menu nếu click ngoài
+      if (!path.includes(createMenu) && !path.includes(createBtn)) {
+        createMenu.classList.remove("show");
+      }
+
+      // Đóng context menu nếu click ngoài
+      if (this.contextMenu && !path.includes(this.contextMenu)) {
+        this.contextMenu.style.display = "none";
+      }
+    });
   }
 
   _renderPlaylist(playlists) {
@@ -137,7 +182,21 @@ class AppSidebar extends HTMLElement {
 
     playlists.forEach((item) => {
       item.addEventListener("click", this._handlePlaylistClick.bind(this));
+
+      // Sự kiện chuột phải
+      item.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.contextTarget = item;
+        this._showContextMenu(e);
+      });
     });
+  }
+
+  _showContextMenu(e) {
+    this.contextMenu.style.top = `${e.clientY}px`;
+    this.contextMenu.style.left = `${e.clientX}px`;
+    this.contextMenu.style.display = "block";
   }
 
   _handlePlaylistClick(event) {

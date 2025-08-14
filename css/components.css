@@ -383,6 +383,7 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+  position: relative;
 }
 
 .library-item:hover {
@@ -391,6 +392,32 @@
 
 .library-item.active {
   background-color: var(--bg-hover);
+}
+
+.context-menu {
+  position: absolute;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  display: none;
+  z-index: 1000;
+  color: white;
+  min-width: 240px;
+  border-radius: 4px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+}
+
+.context-menu li {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.context-menu li:hover {
+  background-color: #444;
 }
 
 .item-image {
