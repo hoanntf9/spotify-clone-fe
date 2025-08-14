@@ -85,23 +85,23 @@ class AppSidebar extends HTMLElement {
 
     // Context Menu
     this.contextMenu = this.shadowRoot.querySelector("#contextMenu");
-    this.renameOption = this.shadowRoot.querySelector(".renameOption");
+    // this.renameOption = this.shadowRoot.querySelector(".renameOption");
     this.deleteOption = this.shadowRoot.querySelector(".deleteOption");
     this.contextTarget = null;
 
-    this.renameOption.addEventListener("click", async () => {
-      if (this.contextTarget) {
-        const titleEl = this.contextTarget.querySelector(".item-title");
-        const currentName = titleEl.textContent;
-        const newName = prompt("Enter new playlist name", currentName);
-        if (newName && newName.trim()) {
-          titleEl.textContent = newName.trim();
-          // TODO: Gọi API rename playlist
-        }
-        this.contextTarget = null;
-        this.contextMenu.style.display = "none";
-      }
-    });
+    // this.renameOption.addEventListener("click", async () => {
+    //   if (this.contextTarget) {
+    //     const titleEl = this.contextTarget.querySelector(".item-title");
+    //     const currentName = titleEl.textContent;
+    //     const newName = prompt("Enter new playlist name", currentName);
+    //     if (newName && newName.trim()) {
+    //       titleEl.textContent = newName.trim();
+    //       // TODO: Gọi API rename playlist
+    //     }
+    //     this.contextTarget = null;
+    //     this.contextMenu.style.display = "none";
+    //   }
+    // });
 
     this.deleteOption.addEventListener("click", async () => {
       if (this.contextTarget) {
