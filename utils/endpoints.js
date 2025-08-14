@@ -6,6 +6,7 @@ const endpoints = {
   authLogin: "/auth/login",
   authRegister: "/auth/register",
   authLogout: "/auth/logout",
+  usersMe: "/users/me",
 };
 
 export default endpoints;
