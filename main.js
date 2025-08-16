@@ -895,8 +895,6 @@ const player = {
 // Khi click vào logo, icon trang chủ thì về trang chủ
 document.addEventListener("DOMContentLoaded", function () {
   const homeBtn = document.querySelector(".home-btn");
-  const logoBtn = document.querySelector(".logo-btn");
-
   const isGitHubPages = window.location.hostname.includes("github.io");
   const repo = isGitHubPages ? "/spotify-clone-fe/" : "/";
 
@@ -905,5 +903,4 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   homeBtn?.addEventListener("click", redirectHomePage);
-  logoBtn?.addEventListener("click", redirectHomePage);
 });

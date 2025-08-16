@@ -104,12 +104,21 @@ class AppSidebar extends HTMLElement {
       }
     });
 
+    const logoBtn = this.shadowRoot.querySelector(".logo-btn");
+    const isGitHubPages = window.location.hostname.includes("github.io");
+    const repo = isGitHubPages ? "/spotify-clone-fe/" : "/";
+
+    const redirectHomePage = () => {
+      window.location.href = window.location.origin + repo;
+    };
+
+    logoBtn?.addEventListener("click", redirectHomePage);
+
     // Khi click vào từng tab playlist, artists thì sẽ chuyển tab
     const navTabs = this.shadowRoot.querySelectorAll(".nav-tab");
-    navTabs.forEach(navTab => {
-
+    navTabs.forEach((navTab) => {
       navTab.addEventListener("click", () => {
-        navTabs.forEach(item => item.classList.remove("active"));
+        navTabs.forEach((item) => item.classList.remove("active"));
         navTab.classList.add("active");
 
         switch (navTab.dataset.tab) {
@@ -169,7 +178,6 @@ class AppSidebar extends HTMLElement {
 
   async _renderArtists() {
     try {
-
       const libraryContent = this.shadowRoot.querySelector(".library-content");
       const urlPlaylist = "https://example.com/playlist-cover.jpg";
       const { artists } = await httpRequest.get(endpoints.artists);
@@ -184,18 +192,18 @@ class AppSidebar extends HTMLElement {
           >
         <img
           src=${escapeHtml(
-              playlist.image_url && !playlist.image_url.includes(urlPlaylist)
-                ? playlist.image_url
-                : "./../../playlist-default.png"
-            )}
+            playlist.image_url && !playlist.image_url.includes(urlPlaylist)
+              ? playlist.image_url
+              : "./../../playlist-default.png"
+          )}
           alt=${playlist.name}
           class="item-image"
         />
         <div class="item-info">
           <div class="item-title">${escapeHtml(playlist.name)}</div>
           <div class="item-subtitle">Playlist • ${escapeHtml(
-              playlist.user_username ? playlist.user_username : "Han"
-            )}</div>
+            playlist.user_username ? playlist.user_username : "Han"
+          )}</div>
         </div>
       </div>`
         )
@@ -207,9 +215,7 @@ class AppSidebar extends HTMLElement {
     }
   }
 
-  renderArtists() {
-
-  }
+  renderArtists() {}
 
   async start() {
     try {
