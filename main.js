@@ -492,7 +492,7 @@ const player = {
   _prevElement: document.querySelector(".btn-prev"),
   _nextElement: document.querySelector(".btn-next"),
   _randomElement: document.querySelector(".btn-random"),
-  _loopElement: document.querySelector(".btn-repeat"),
+  _repeatElement: document.querySelector(".btn-repeat"),
   _playerTitle: document.querySelector(".player-title"),
   _playerArtist: document.querySelector(".player-artist"),
   _playerImage: document.querySelector(".player-image"),
@@ -511,6 +511,14 @@ const player = {
   _start() {
     this._render();
     this._handlePlayback();
+
+    // Hiển thị tippy khi hover vào control player
+    tippy(this._togglePlayElement, { content: "Play" });
+    tippy(this._nextElement, { content: "Next" });
+    tippy(this._prevElement, { content: "Previous" });
+    tippy(this._repeatElement, { content: "Enable Repeat" });
+    tippy(this._randomElement, { content: "Enable shuffle" });
+    tippy(this._faVolumeIcon, { content: "Mute" });
 
     // DOM events
     this._togglePlayElement.onclick = this._togglePlay.bind(this);
@@ -541,11 +549,11 @@ const player = {
     this._prevElement.onclick = this._handleControl.bind(this, this.PREV);
     this._nextElement.onclick = this._handleControl.bind(this, this.NEXT);
     // Khi người dùng nhấn vào nút loop
-    this._loopElement.onclick = () => {
+    this._repeatElement.onclick = () => {
       this._isLoop = !this._isLoop;
 
       this._audioElement.loop = this._isLoop;
-      this._loopElement.classList.toggle("active", this._isLoop);
+      this._repeatElement.classList.toggle("active", this._isLoop);
     };
 
     // Khi người dùng nhấn vào nút random
@@ -638,6 +646,10 @@ const player = {
 
         // Chuyển đổi trạng thái sang bật nhạc
         this._isPlaying = false;
+
+        // Câp nhật lại thanh trình duyệt background color
+        this._updateVolumeColor(0);
+
         this._render();
       } else {
         // play
@@ -652,6 +664,11 @@ const player = {
 
         // Chuyển đổi trạng thái sang tắt nhạc
         this._isPlaying = true;
+
+        // Câp nhật lại thanh trình duyệt background color
+        this._updateVolumeColor(this._lastVolume * 100);
+
+        // Tại sao phải gọi hàm render ở đây????
         this._render();
       }
     };
