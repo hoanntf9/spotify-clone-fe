@@ -776,6 +776,29 @@
   height: 6px;
 }
 
+input[type="range"].progress-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ccc;
+  outline: none;
+}
+
+input[type="range"].progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+}
+
+input[type="range"].progress-bar::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
 .progress-fill,
 .volume-fill {
   height: 100%;

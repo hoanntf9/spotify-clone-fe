@@ -302,6 +302,7 @@ function rendenBiggestHits(playlists) {
   const urlPlaylist = "https://example.com/playlist-cover.jpg";
 
   const html = playlists
+    .slice(0, 3)
     .map((playlist) => {
       return `
         <div class="hit-card">
@@ -328,7 +329,7 @@ function rendenBiggestHits(playlists) {
     })
     .join("");
 
-  hitsGrid.innerHTML = html;
+  // hitsGrid.innerHTML = html;
 }
 
 // Popular Artists
@@ -347,6 +348,7 @@ function renderPopularArtists(artists) {
   const artistsGrid = document.querySelector("#artists-grid");
 
   const html = artists
+    .slice(0, 3)
     .map((artist) => {
       return `
         <div class="artist-card">
@@ -367,7 +369,7 @@ function renderPopularArtists(artists) {
     })
     .join("");
 
-  artistsGrid.innerHTML = html;
+  // artistsGrid.innerHTML = html;
 }
 
 // Xử lý sự kiện khi back/forward: popstate
@@ -463,3 +465,177 @@ function renderTracks(tracks) {
 
   trackList.innerHTML = html;
 }
+
+// Music Player App
+document.addEventListener("DOMContentLoaded", async function () {
+  // Gọi dữ liệu từ danh sách bài hát từ API
+  const { tracks } = await httpRequest.get(endpoints.tracks);
+
+  if (tracks.length) {
+    player._tracks = tracks;
+  }
+  player._start();
+});
+
+const player = {
+  _trackListElement: document.querySelector("#track-list"),
+  _artistNameElement: document.querySelector("#artist-name"),
+  _monthlyListenersElement: document.querySelector(".monthly-listeners"),
+  _heroImageElement: document.querySelector("#hero-image"),
+  _audioElement: document.querySelector("#audio"),
+  _togglePlayElement: document.querySelector("#btn-toggle-play"),
+  _playIconElement: document.querySelector("#play-icon"),
+  _timeEndElement: document.querySelector("#time-end"),
+  _timeStartElement: document.querySelector("#time-start"),
+  _progressElement: document.querySelector(".progress-bar"),
+
+  _isPlaying: false,
+  _tracks: [],
+  _currentIndex: 0,
+  _start() {
+    this._render();
+    this._handlePlayback();
+
+    // DOM events
+    this._togglePlayElement.onclick = this._togglePlay.bind(this);
+
+    // Khi click vào nút `play`
+    this._audioElement.onplay = () => {
+      this._playIconElement.classList.remove("fa-play");
+      this._playIconElement.classList.add("fa-pause");
+
+      // Chuyển đổi trạng thái sang bật nhạc
+      this._isPlaying = true;
+      // Sao lại cần phải gọi hàm render ở đây!!!!
+      // this.render();
+    };
+
+    // Khi click vào nút `pause`
+    this._audioElement.onpause = () => {
+      this._playIconElement.classList.remove("fa-pause");
+      this._playIconElement.classList.add("fa-play");
+
+      // Chuyển đổi trạng thái sang tắt nhạc
+      this._isPlaying = false;
+
+      // Sao lại cần phải gọi hàm render ở đây!!!!
+      // this.render();
+    };
+
+    // Khi audio được phát và được update
+    this._audioElement.ontimeupdate = () => {
+      // Check khi người dùng seeking thì không update thời gian nhạc
+      if (this._progressElement.seeking) {
+        return;
+      }
+
+      // Lấy thời gian hiện tại của bài hát đang phát được tính bằng (s)
+      const currentTime = this._audioElement.currentTime;
+
+      // Lấy tổng thời lượng của bài hát tính bằng (s)
+      const duration = this._audioElement.duration;
+
+      // Tính phần trăm bài hát đã phát xong (%)
+      const progress = (currentTime / duration) * 100;
+
+      // Cập nhật giá trị vào thanh tiến trình
+      this._progressElement.value = progress || 0;
+
+      // Update start time khi đang phát nhạc
+      this._timeStartElement.textContent = this._formatTime(currentTime);
+
+      // Cập nhật màu vào thanh tiến trình
+      this._updateProgressBarColor(progress || 0);
+    };
+  },
+  _render() {
+    const html = this._tracks
+      .map((track, index) => {
+        const isCurrentSongPlaying =
+          index === this._currentIndex && this._isPlaying;
+        console.log(isCurrentSongPlaying);
+        return `
+          <div class="track-item">
+            <div class="track-number">
+              ${
+                isCurrentSongPlaying
+                  ? `<div class="equalizer">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  `
+                  : index + 1
+              }
+            </div>
+            
+            <div class="track-image">
+              <img
+                src=${escapeHtml(track.image_url)}
+                alt${track.image_url}
+              />
+            </div>
+            <div class="track-info">
+              <div class="track-name">${escapeHtml(track.title)}</div>
+            </div>
+            <div class="track-plays">${formatTrackPlayCount(
+              track.play_count
+            )}</div>
+            <div class="track-duration">${formartTrackDuration(
+              track.duration
+            )}</div>
+            <button class="track-menu-btn">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+          </div>
+          `;
+      })
+      .join("");
+
+    this._trackListElement.innerHTML = html;
+  },
+  _handlePlayback() {
+    const currentSong = this._getCurrentSong();
+    this._artistNameElement.textContent = currentSong.title;
+    this._monthlyListenersElement.textContent = `${formatTrackPlayCount(
+      currentSong.play_count
+    )} monthly listeners`;
+    this._heroImageElement.src = currentSong.image_url;
+
+    this._audioElement.src = currentSong.audio_url;
+
+    // oncanplay
+    this._audioElement.oncanplay = () => {
+      if (this._isPlaying) {
+        this._audioElement.play();
+      }
+
+      // Hiển thì thời gian kết thúc bằng tổng thời gian của audio cho trước
+      this._timeEndElement.textContent = this._formatTime(
+        this._audioElement.duration
+      );
+    };
+  },
+  _formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  },
+  _updateProgressBarColor(value) {
+    const progress = Math.min(100, Math.max(0, Number(value.toFixed(2)))) + 0.5;
+
+    this._progressElement.style.background = `linear-gradient(to right, var(--accent-primary) 0%, var(--accent-primary) ${progress}%, #ccc ${progress}%, #ccc 100%)`;
+  },
+  _getCurrentSong() {
+    return this._tracks[this._currentIndex];
+  },
+  _togglePlay() {
+    // Khi click vào nút play thì toggle play song
+    if (this._audioElement.paused) {
+      this._audioElement.play();
+    } else {
+      this._audioElement.pause();
+    }
+  },
+};

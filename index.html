@@ -94,6 +94,59 @@
                 <!-- Artists Card -->
               </div>
             </section>
+            <!-- Song Banner -->
+            <section class="artist-hero">
+              <div class="hero-background">
+                <img
+                  src="placeholder.svg"
+                  alt="Đen artist background"
+                  class="hero-image"
+                  id="hero-image"
+                />
+                <div class="hero-overlay"></div>
+              </div>
+              <div class="hero-content">
+                <div class="verified-badge">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Verified Artist</span>
+                </div>
+                <h1 class="artist-name" id="artist-name">Đen</h1>
+                <p class="monthly-listeners" id="monthly-listeners">
+                  1,021,833 monthly listeners
+                </p>
+              </div>
+            </section>
+
+            <section class="artist-controls">
+              <button class="play-btn-large">
+                <i class="fas fa-play"></i>
+              </button>
+            </section>
+
+            <!-- Song Playlist -->
+            <section class="popular-section">
+              <h2 class="section-title">Song player...</h2>
+              <div class="track-list" id="track-list">
+                <!-- Item song -->
+                <div class="track-item">
+                  <div class="track-number">1</div>
+                  <div class="track-image">
+                    <img
+                      src="placeholder.svg?height=40&amp;width=40"
+                      alt="Cho Tôi Lang Thang"
+                    />
+                  </div>
+                  <div class="track-info">
+                    <div class="track-name">Cho Tôi Lang Thang</div>
+                  </div>
+                  <div class="track-plays">27,498,341</div>
+                  <div class="track-duration">4:18</div>
+                  <button class="track-menu-btn">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+            </section>
           </div>
 
           <div class="wrap-detail">
@@ -187,9 +240,80 @@
       </main>
 
       <!-- Footer -->
-      <div slot="footer-slot">
-        <app-footer></app-footer>
-      </div>
+      <footer class="player">
+        <div class="player-left">
+          <img
+            src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRlE3JMgmjyxYBHiXlRQHDc1YjQX442u46bwPj6aI8urpok1jMB"
+            alt="Current track"
+            class="player-image"
+          />
+          <div class="player-info">
+            <div class="player-title">Yêu Một Người Sao Buồn Đến Thế</div>
+            <div class="player-artist">Noo Phước Thịnh</div>
+          </div>
+          <button class="add-btn">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+
+        <div class="player-center">
+          <div class="player-controls">
+            <button class="control-btn active">
+              <i class="fas fa-random"></i>
+            </button>
+            <button class="control-btn">
+              <i class="fas fa-step-backward"></i>
+            </button>
+            <button class="control-btn play-btn" id="btn-toggle-play">
+              <i class="fas fa-play" id="play-icon"></i>
+            </button>
+            <button class="control-btn">
+              <i class="fas fa-step-forward"></i>
+            </button>
+            <button class="control-btn">
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
+          <div class="progress-container">
+            <span class="time" id="time-start">00:00</span>
+            <!-- <div class="progress-bar">
+              <div class="progress-fill" style="width: 20%"></div>
+              <div class="progress-handle"></div>
+            </div> -->
+            <input
+              type="range"
+              id="progress"
+              class="progress-bar"
+              value="0"
+              step="1"
+              min="0"
+              max="100"
+            />
+            <span class="time" id="time-end">4:59</span>
+          </div>
+
+          <!-- Audio -->
+          <audio src="" id="audio" class="audio"></audio>
+        </div>
+
+        <div class="player-right">
+          <button class="control-btn">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <div class="volume-container">
+            <button class="control-btn">
+              <i class="fas fa-volume-down"></i>
+            </button>
+            <div class="volume-bar">
+              <div class="volume-fill" style="width: 70%"></div>
+              <div class="volume-handle"></div>
+            </div>
+          </div>
+          <button class="control-btn">
+            <i class="fas fa-expand"></i>
+          </button>
+        </div>
+      </footer>
     </div>
 
     <!-- Auth Modal -->
