@@ -549,14 +549,6 @@
   line-height: 1;
 }
 
-.artist-auth {
-  font-size: 36px;
-  font-weight: 500;
-  color: #b6a9a9;
-  margin-bottom: var(--spacing-sm);
-  line-height: 1;
-}
-
 .monthly-listeners {
   font-size: 16px;
   color: var(--text-primary);
@@ -696,15 +688,33 @@
 
 .track-info {
   min-width: 0;
+  line-height: 1.6;
 }
 
 .track-name {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 400;
-  color: var(--text-primary);
+  color: #aaaaaa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.track-name.active {
+  color: var(--accent-primary);
+}
+
+.track-artist-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: #676767;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist-name.active {
+  color: #f1f1f1;
 }
 
 .track-name.playing-text {

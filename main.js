@@ -302,7 +302,6 @@ function rendenBiggestHits(playlists) {
   const urlPlaylist = "https://example.com/playlist-cover.jpg";
 
   const html = playlists
-    .slice(0, 3)
     .map((playlist) => {
       return `
         <div class="hit-card">
@@ -329,7 +328,7 @@ function rendenBiggestHits(playlists) {
     })
     .join("");
 
-  // hitsGrid.innerHTML = html;
+  hitsGrid.innerHTML = html;
 }
 
 // Popular Artists
@@ -348,7 +347,6 @@ function renderPopularArtists(artists) {
   const artistsGrid = document.querySelector("#artists-grid");
 
   const html = artists
-    .slice(0, 3)
     .map((artist) => {
       return `
         <div class="artist-card">
@@ -369,7 +367,7 @@ function renderPopularArtists(artists) {
     })
     .join("");
 
-  // artistsGrid.innerHTML = html;
+  artistsGrid.innerHTML = html;
 }
 
 // Xử lý sự kiện khi back/forward: popstate
@@ -495,7 +493,16 @@ const player = {
   _nextElement: document.querySelector(".btn-next"),
   _randomElement: document.querySelector(".btn-random"),
   _loopElement: document.querySelector(".btn-repeat"),
+  _playerTitle: document.querySelector(".player-title"),
+  _playerArtist: document.querySelector(".player-artist"),
+  _playerImage: document.querySelector(".player-image"),
+  _muteElement: document.querySelector(".btn-mute"),
+  _iconMuteElement: document.querySelector(".icon-mute"),
+  _volumeSlider: document.querySelector(".volume-slider"),
+  _faVolumeIcon: document.querySelector(".fa-volume-icon"),
 
+  _lastVolume: 0.7, // 0 - 1
+  _isMuted: false,
   _isRandom: false,
   _isLoop: false,
   _isPlaying: false,
@@ -512,7 +519,7 @@ const player = {
     this._audioElement.onplay = () => {
       this._playIconElement.classList.remove("fa-play");
       this._playIconElement.classList.add("fa-pause");
-
+      // this._trackName.classList.add("active");
       // Chuyển đổi trạng thái sang bật nhạc
       this._isPlaying = true;
       // Sao lại cần phải gọi hàm render ở đây!!!!
@@ -614,6 +621,60 @@ const player = {
 
       this._progressElement.seeking = false;
     };
+
+    // Mute
+    this._muteElement.onclick = () => {
+      this._isMuted = !this._isMuted;
+
+      if (this._isMuted) {
+        // mute
+        this._iconMuteElement.className = "fa-solid fa-microphone-slash";
+        this._audioElement.volume = 0;
+        this._playIconElement.classList.remove("fa-pause");
+        this._playIconElement.classList.add("fa-play");
+        this._audioElement.pause();
+
+        this._volumeSlider.value = 0;
+
+        // Chuyển đổi trạng thái sang bật nhạc
+        this._isPlaying = false;
+        this._render();
+      } else {
+        // play
+        this._iconMuteElement.className = "fas fa-microphone";
+        this._audioElement.volume = this._lastVolume;
+        this._playIconElement.classList.remove("fa-play");
+        this._playIconElement.classList.add("fa-pause");
+
+        this._audioElement.play();
+
+        this._volumeSlider.value = this._lastVolume * 100;
+
+        // Chuyển đổi trạng thái sang tắt nhạc
+        this._isPlaying = true;
+        this._render();
+      }
+    };
+
+    // Kéo thả volumn
+    this._volumeSlider.oninput = () => {
+      const volume = this._volumeSlider.value / 100;
+      this._audioElement.volume = volume;
+
+      this._faVolumeIcon.classList.remove(
+        "fa-volume-xmark",
+        "fa-volume-low",
+        "fa-volume-high"
+      );
+
+      if (volume === 0) {
+        this._faVolumeIcon.classList.add("fa-solid", "fa-volume-xmark");
+      } else if (volume < 0.5) {
+        this._faVolumeIcon.classList.add("fa-solid", "fa-volume-low");
+      } else {
+        this._faVolumeIcon.classList.add("fa-solid", "fa-volume-high");
+      }
+    };
   },
   _render() {
     const html = this._tracks
@@ -646,7 +707,12 @@ const player = {
               />
             </div>
             <div class="track-info">
-              <div class="track-name">${escapeHtml(track.title)}</div>
+              <div class="track-name ${
+                isCurrentSongPlaying ? "active" : ""
+              }">${escapeHtml(track.title)}</div>
+              <div class="track-artist-name ${
+                isCurrentSongPlaying ? "active" : ""
+              }">${escapeHtml(track.artist_name)}</div>
             </div>
             <div class="track-plays">${formatTrackPlayCount(
               track.play_count
@@ -685,12 +751,19 @@ const player = {
   _handlePlayback() {
     const currentSong = this._getCurrentSong();
     this._artistNameElement.textContent = currentSong.title;
+    this._playerTitle.textContent = currentSong.title;
+    this._playerArtist.textContent = currentSong.artist_name;
+    this._playerImage.src = currentSong.image_url;
+
     this._monthlyListenersElement.textContent = `${formatTrackPlayCount(
       currentSong.play_count
     )} monthly listeners`;
     this._heroImageElement.src = currentSong.image_url;
+    this._audioElement.volume = this._lastVolume;
 
     this._audioElement.src = currentSong.audio_url;
+
+    this._volumeSlider.value = this._lastVolume * 100;
 
     // oncanplay
     this._audioElement.oncanplay = () => {

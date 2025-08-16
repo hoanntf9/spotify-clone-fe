@@ -111,7 +111,6 @@
                   <span>Verified Artist</span>
                 </div>
                 <h1 class="artist-name" id="artist-name">Đen</h1>
-                <p class="artist-auth" id="artist-auth">Son Tung MTP</p>
                 <p class="monthly-listeners" id="monthly-listeners">
                   1,021,833 monthly listeners
                 </p>
@@ -285,7 +284,7 @@
               type="range"
               id="progress"
               class="progress-bar"
-              value="0"
+              value="40"
               step="1"
               min="0"
               max="100"
@@ -298,17 +297,19 @@
         </div>
 
         <div class="player-right">
-          <button class="control-btn">
-            <i class="fas fa-microphone"></i>
+          <button class="control-btn btn-mute">
+            <i class="fas fa-microphone icon-mute"></i>
           </button>
           <div class="volume-container">
             <button class="control-btn">
-              <i class="fas fa-volume-down"></i>
+              <i class="fas fa-volume-down fa-volume-icon"></i>
             </button>
-            <div class="volume-bar">
+            <!-- <div class="volume-bar">
               <div class="volume-fill" style="width: 70%"></div>
               <div class="volume-handle"></div>
-            </div>
+            </div> -->
+
+            <input type="range" class="volume-bar volume-slider" value="100" />
           </div>
           <button class="control-btn">
             <i class="fas fa-expand"></i>

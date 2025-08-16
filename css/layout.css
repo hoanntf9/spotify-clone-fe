@@ -160,7 +160,7 @@
 }
 
 .player-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: var(--text-primary);
   white-space: nowrap;
@@ -170,7 +170,7 @@
 }
 
 .player-artist {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
