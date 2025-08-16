@@ -897,11 +897,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const homeBtn = document.querySelector(".home-btn");
   const logoBtn = document.querySelector(".logo-btn");
 
-  const origin = window.location.origin;
-  const pathParts = window.location.pathname.split("/").filter(Boolean);
-
-  // Nếu có repo name (GitHub Pages) thì lấy, nếu không thì để "/"
-  const repo = pathParts.length > 0 ? `/${pathParts[0]}/` : "/";
+  const isGitHubPages = window.location.hostname.includes("github.io");
+  const repo = isGitHubPages ? "/spotify-clone-fe/" : "/";
 
   const redirectHomePage = () => {
     window.location.href = origin + repo;
