@@ -900,11 +900,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const origin = window.location.origin;
   const pathParts = window.location.pathname.split("/").filter(Boolean);
 
+  // Nếu có repo name (GitHub Pages) thì lấy, nếu không thì để "/"
+  const repo = pathParts.length > 0 ? `/${pathParts[0]}/` : "/";
+
   const redirectHomePage = () => {
-    window.location.href = origin + pathParts;
+    window.location.href = origin + repo;
   };
 
-  // console.log("origin + repo", origin + pathParts);
   homeBtn?.addEventListener("click", redirectHomePage);
   logoBtn?.addEventListener("click", redirectHomePage);
 });
