@@ -891,3 +891,20 @@ const player = {
     }
   },
 };
+
+// Khi click vào logo, icon trang chủ thì về trang chủ
+document.addEventListener("DOMContentLoaded", function () {
+  const homeBtn = document.querySelector(".home-btn");
+  const logoBtn = document.querySelector(".logo-btn");
+
+  const origin = window.location.origin;
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+
+  const redirectHomePage = () => {
+    window.location.href = origin + repo;
+  };
+
+  // console.log("origin + repo", origin + pathParts);
+  homeBtn?.addEventListener("click", redirectHomePage);
+  logoBtn?.addEventListener("click", redirectHomePage);
+});
