@@ -549,6 +549,14 @@
   line-height: 1;
 }
 
+.artist-auth {
+  font-size: 36px;
+  font-weight: 500;
+  color: #b6a9a9;
+  margin-bottom: var(--spacing-sm);
+  line-height: 1;
+}
+
 .monthly-listeners {
   font-size: 16px;
   color: var(--text-primary);
@@ -630,6 +638,48 @@
   color: var(--text-secondary);
   text-align: center;
   font-weight: 400;
+}
+
+/*  Equalizer */
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 20px;
+  height: 18px;
+}
+
+.equalizer span {
+  display: block;
+  width: 3px;
+  background: #1db954;
+  animation: bounce 0.65s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    height: 4px;
+  }
+  25% {
+    height: 10px;
+  }
+  50% {
+    height: 18px;
+  }
+  75% {
+    height: 12px;
+  }
+}
+
+.equalizer span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.equalizer span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.equalizer span:nth-child(4) {
+  animation-delay: 0.3s;
 }
 
 .playing-icon {

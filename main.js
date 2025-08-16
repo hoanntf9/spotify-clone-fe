@@ -478,6 +478,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 const player = {
+  NEXT: 1,
+  PREV: -1,
+  PREV_THROTTLE: 2,
   _trackListElement: document.querySelector("#track-list"),
   _artistNameElement: document.querySelector("#artist-name"),
   _monthlyListenersElement: document.querySelector(".monthly-listeners"),
@@ -488,7 +491,13 @@ const player = {
   _timeEndElement: document.querySelector("#time-end"),
   _timeStartElement: document.querySelector("#time-start"),
   _progressElement: document.querySelector(".progress-bar"),
+  _prevElement: document.querySelector(".btn-prev"),
+  _nextElement: document.querySelector(".btn-next"),
+  _randomElement: document.querySelector(".btn-random"),
+  _loopElement: document.querySelector(".btn-repeat"),
 
+  _isRandom: false,
+  _isLoop: false,
   _isPlaying: false,
   _tracks: [],
   _currentIndex: 0,
@@ -507,7 +516,7 @@ const player = {
       // Chuyển đổi trạng thái sang bật nhạc
       this._isPlaying = true;
       // Sao lại cần phải gọi hàm render ở đây!!!!
-      // this.render();
+      this._render();
     };
 
     // Khi click vào nút `pause`
@@ -519,7 +528,26 @@ const player = {
       this._isPlaying = false;
 
       // Sao lại cần phải gọi hàm render ở đây!!!!
-      // this.render();
+      this._render();
+    };
+
+    this._prevElement.onclick = this._handleControl.bind(this, this.PREV);
+    this._nextElement.onclick = this._handleControl.bind(this, this.NEXT);
+    // Khi người dùng nhấn vào nút loop
+    this._loopElement.onclick = () => {
+      this._isLoop = !this._isLoop;
+
+      this._audioElement.loop = this._isLoop;
+      this._loopElement.classList.toggle("active", this._isLoop);
+    };
+
+    // Khi người dùng nhấn vào nút random
+    this._randomElement.onclick = () => {
+      this._isRandom = !this._isRandom;
+
+      this._randomElement.classList.toggle("active", this._isRandom);
+
+      this._handleForNewIndex();
     };
 
     // Khi audio được phát và được update
@@ -547,15 +575,56 @@ const player = {
       // Cập nhật màu vào thanh tiến trình
       this._updateProgressBarColor(progress || 0);
     };
+
+    // Xử lý khi đang bật loop mà hát hết bài thì xử lý
+    this._audioElement.onended = () => {
+      if (this._isLoop) {
+        // Loop toàn playlist
+        this._currentIndex = (this._currentIndex + 1) % this._tracks.length;
+        this._handleForNewIndex();
+        this._audioElement.play();
+      } else if (this._isRandom) {
+        // Nếu bật random
+        this._currentIndex = this._getRandomIndex();
+        this._handleForNewIndex();
+        this._audioElement.play();
+      } else {
+        // Không loop, không random: chỉ next đến bài tiếp
+        if (this._currentIndex < this._tracks.length - 1) {
+          this._currentIndex++;
+          this._handleForNewIndex();
+          this._audioElement.play();
+        } else {
+          // Nếu hết bài và không loop playlist thì dừng
+          this._isPlaying = false;
+          this._render();
+        }
+      }
+    };
+
+    this._progressElement.onmousedown = () => {
+      this._progressElement.seeking = true;
+    };
+
+    this._progressElement.onmouseup = () => {
+      const nextStep = +this._progressElement.value;
+
+      this._audioElement.currentTime =
+        (this._audioElement.duration / 100) * nextStep;
+
+      this._progressElement.seeking = false;
+    };
   },
   _render() {
     const html = this._tracks
       .map((track, index) => {
         const isCurrentSongPlaying =
           index === this._currentIndex && this._isPlaying;
-        console.log(isCurrentSongPlaying);
         return `
-          <div class="track-item">
+          <div 
+            class="track-item ${isCurrentSongPlaying ? "playing" : ""}"
+            data-index="${index}"
+          >
             <div class="track-number">
               ${
                 isCurrentSongPlaying
@@ -569,7 +638,7 @@ const player = {
                   : index + 1
               }
             </div>
-            
+
             <div class="track-image">
               <img
                 src=${escapeHtml(track.image_url)}
@@ -594,6 +663,24 @@ const player = {
       .join("");
 
     this._trackListElement.innerHTML = html;
+
+    const trackEls = document.querySelectorAll(".track-item");
+    trackEls.forEach((el) => el.classList.remove("active"));
+
+    // Gán active cho bài hiện tại
+    const currentTrackEl = document.querySelector(
+      `.track-item[data-index="${this._currentIndex}"]`
+    );
+
+    if (currentTrackEl) {
+      currentTrackEl.classList.add("active");
+
+      // Auto scroll vào tầm nhìn
+      currentTrackEl.scrollIntoView({
+        behavior: "smooth",
+        block: "center", // nearest hoặc "center" nếu muốn luôn ở giữa
+      });
+    }
   },
   _handlePlayback() {
     const currentSong = this._getCurrentSong();
@@ -621,6 +708,43 @@ const player = {
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  },
+  _handleControl(step) {
+    this._isPlaying = true;
+
+    const shouldReset = this._audioElement.currentTime > this.PREV_THROTTLE;
+
+    if (step === this.PREV && shouldReset) {
+      this._audioElement.currentTime = 0;
+      return;
+    }
+
+    if (this._isRandom) {
+      this._currentIndex = this._getRandomIndex();
+    } else {
+      this._currentIndex += step;
+    }
+
+    this._handleForNewIndex();
+  },
+  _getRandomIndex() {
+    if (this._tracks.length === 1) {
+      return this._currentIndex;
+    }
+
+    let randIndex = null;
+
+    do {
+      randIndex = Math.floor(Math.random() * this._tracks.length);
+    } while (randIndex === this._currentIndex);
+
+    return randIndex;
+  },
+  _handleForNewIndex() {
+    this._currentIndex =
+      (this._currentIndex + this._tracks.length) % this._tracks.length;
+    this._handlePlayback();
+    this._render();
   },
   _updateProgressBarColor(value) {
     const progress = Math.min(100, Math.max(0, Number(value.toFixed(2)))) + 0.5;
