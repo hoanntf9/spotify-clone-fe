@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const pathParts = window.location.pathname.split("/").filter(Boolean);
 
   const redirectHomePage = () => {
-    window.location.href = origin + repo;
+    window.location.href = origin + pathParts;
   };
 
   // console.log("origin + repo", origin + pathParts);
