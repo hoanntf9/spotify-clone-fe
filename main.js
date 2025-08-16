@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const repo = isGitHubPages ? "/spotify-clone-fe/" : "/";
 
   const redirectHomePage = () => {
-    window.location.href = origin + repo;
+    window.location.href = window.location.origin + repo;
   };
 
   homeBtn?.addEventListener("click", redirectHomePage);
