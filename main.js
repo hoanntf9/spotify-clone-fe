@@ -260,7 +260,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       clearStorage();
-      window.location.href = "/";
+
+      const origin = window.location.origin;
+      const pathName = window.location.pathname;
+      window.location.href = origin + pathName;
     }
   });
 });
