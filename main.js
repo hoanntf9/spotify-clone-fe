@@ -501,7 +501,7 @@ const player = {
   _volumeSlider: document.querySelector(".volume-slider"),
   _faVolumeIcon: document.querySelector(".fa-volume-icon"),
 
-  _lastVolume: 0.7, // 0 - 1
+  _lastVolume: 0.5, // 0 - 1
   _isMuted: false,
   _isRandom: false,
   _isLoop: false,
@@ -660,6 +660,7 @@ const player = {
     this._volumeSlider.oninput = () => {
       const volume = this._volumeSlider.value / 100;
       this._audioElement.volume = volume;
+      this._updateVolumeColor(volume * 100 || 0);
 
       this._faVolumeIcon.classList.remove(
         "fa-volume-xmark",
@@ -747,6 +748,23 @@ const player = {
         block: "center", // nearest hoặc "center" nếu muốn luôn ở giữa
       });
     }
+
+    // Click vào từng bài thì phát luôn bài đó
+    trackEls.forEach((el) => {
+      el.addEventListener("click", () => {
+        const index = Number(el.dataset.index);
+        this._playTrack(index);
+      });
+    });
+  },
+  _playTrack(index) {
+    this._currentIndex = index;
+    this._audioElement.src = this._tracks[index].audio_url;
+    this._audioElement.play();
+    this._isPlaying = true;
+
+    // Render lại để update UI
+    this._render();
   },
   _handlePlayback() {
     const currentSong = this._getCurrentSong();
@@ -764,6 +782,18 @@ const player = {
     this._audioElement.src = currentSong.audio_url;
 
     this._volumeSlider.value = this._lastVolume * 100;
+
+    //Ban đầu set luôn background color cho input volume
+    const initVolume = this._volumeSlider.value; // 0–100
+    const percentage = (initVolume / 100) * 100;
+
+    this._volumeSlider.style.background = `linear-gradient(
+      to right,
+      #1db954 0%,
+      #1db954 ${percentage}%,
+      #ccc ${percentage}%,
+      #ccc 100%
+    )`;
 
     // oncanplay
     this._audioElement.oncanplay = () => {
@@ -823,6 +853,11 @@ const player = {
     const progress = Math.min(100, Math.max(0, Number(value.toFixed(2)))) + 0.5;
 
     this._progressElement.style.background = `linear-gradient(to right, var(--accent-primary) 0%, var(--accent-primary) ${progress}%, #ccc ${progress}%, #ccc 100%)`;
+  },
+  _updateVolumeColor(value) {
+    const progress = Math.min(100, Math.max(0, Number(value.toFixed(2)))) + 0.5;
+
+    this._volumeSlider.style.background = `linear-gradient(to right, var(--accent-primary) 0%, var(--accent-primary) ${progress}%, #ccc ${progress}%, #ccc 100%)`;
   },
   _getCurrentSong() {
     return this._tracks[this._currentIndex];

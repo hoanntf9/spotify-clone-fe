@@ -822,7 +822,8 @@
 
 /* Progress bars */
 .progress-bar,
-.volume-bar {
+.volume-bar,
+.volume-slider {
   position: relative;
   height: 4px;
   background-color: var(--bg-tertiary);
@@ -832,18 +833,21 @@
 }
 
 .progress-bar:hover,
-.volume-bar:hover {
+.volume-bar:hover,
+.volume-slider:hover {
   height: 6px;
 }
 
-input[type="range"].progress-bar {
+input[type="range"].progress-bar,
+input[type="range"].volume-slider {
   appearance: none;
   -webkit-appearance: none;
   background: #ccc;
   outline: none;
 }
 
-input[type="range"].progress-bar::-webkit-slider-thumb {
+input[type="range"].progress-bar::-webkit-slider-thumb,
+input[type="range"].volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 14px;
   width: 14px;
@@ -855,7 +859,8 @@ input[type="range"].progress-bar::-webkit-slider-thumb {
   transition: transform 0.2s;
 }
 
-input[type="range"].progress-bar::-webkit-slider-thumb:hover {
+input[type="range"].progress-bar::-webkit-slider-thumb:hover,
+input[type="range"].volume-slider::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
 
